@@ -2,7 +2,7 @@ library(readxl)
 
 # Commodity Price Index ####
 pcom.file <- paste(tempfile(), ".ashx", sep = "")
-download.file("https://www.imf.org/-/media/Files/Research/CommodityPrices/Monthly/external-dataseptember.ashx", pcom.file, mode = "wb")
+download.file("https://www.imf.org/-/media/Files/Research/CommodityPrices/Monthly/external-dataoctober.ashx", pcom.file, mode = "wb")
 
 pcom <- read_excel(pcom.file, skip = 3, sheet = 1)
 pcom <- as.numeric(pcom$Monthly...2)
