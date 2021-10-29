@@ -11,6 +11,7 @@ Yl.f <- cbind(pcom, er, pc)
 Yl.f <- log(Yl.f) # log transformation
 Yd.f <- 100 * diff(Yl.f) # log-diff transformation
 
+
 Yl <- window(Yl.f, start = c(2003, 01), end = c(2019, 12))
 Yd <- window(Yd.f, start = c(2003, 01), end = c(2019, 12))
 
@@ -25,7 +26,7 @@ pmax <- 12 # Maximum lag order
 
 popt <- VARselect(Y, lag.max = pmax, type = "const")
 popt
-p <- popt$selection[2] # HQIC (For log-levels series, see Kilian & Lütkepohl, pp. 373), p > 1 neccesary
+p <- popt$selection[2] # HQIC (For log-levels series, see Kilian & L?tkepohl, pp. 373), p > 1 neccesary
 
 # Estimation
 Y <- Y[(pmax - p + 1):nrow(Y), ] # Starting in Jan-04
@@ -158,3 +159,4 @@ plot.erpt.boot(ERPT.boot, H.ERPT)
 # # ERPT (Bootstrap): Log-levels
 # ERPT.boot <- SVAR.erpt.boot(SVAR, Amat, Bmat, H.ERPT, 3, 2, gamma, Y.boot, cumulative = TRUE)
 # plot.erpt.boot(ERPT.boot, H.ERPT)
+

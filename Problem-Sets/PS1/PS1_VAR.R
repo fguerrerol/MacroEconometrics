@@ -36,10 +36,10 @@ T <- VAR$obs # Number of effective sample observations, excluding "p" starting v
 plot(VAR)
 
 # Manual plotting of residuals
-# e <- resid(VAR)
-# e <- ts(e, end = end(Yd), frequency = frequency(Yd))
-# colnames(e) <- paste("e.", colnames(Yd), sep = "")
-# plot(e, main = "Residuals")
+e <- resid(VAR)
+e <- ts(e, end = end(Yd), frequency = frequency(Yd))
+colnames(e) <- paste("e.", colnames(Yd), sep = "")
+plot(e, main = "Residuals")
 
 # Granger Causality ####
 
@@ -66,9 +66,16 @@ h.PT <- min(10, trunc(T / 5)) # Rule of thumb for Portmanteau tests (Rob Hyndman
 VAR.PT.test.serial <- serial.test(VAR, lags.pt = h.PT, type = "PT.asymptotic")
 VAR.PT.test.serial
 
+#Se tiene un p-valor de 0.067 con lo cual no se rechaza la hipótesis nula y no se tiene autocorrelacion
+
+
 # Portmanteau Test (adjusted)
 VAR.PT.test.serial.adj <- serial.test(VAR, lags.pt = h.PT, type = "PT.adjusted") # Small sample correc.
 VAR.PT.test.serial.adj
+
+#### Hacinedo el test ajustado de Portmanteu vemos que no se rechaza la hipótesis nula.
+
+
 
 h.BG <- 3
 # Breusch-Godfrey Test
