@@ -1,0 +1,31 @@
+Tasa de interés externa, política monetaria EE.UU. (puntos porcentuales).
+
+https://si3.bcentral.cl/Siete/ES/Siete/Cuadro/CAP_EI/MN_EI11/EI_MON_POL_D/637184968001893180?cbFechaInicio=2001&cbFechaTermino=2021&cbFrecuencia=MONTHLY&cbCalculo=NONE&cbFechaBase=
+
+Precio internacional del cobre
+
+https://si3.bcentral.cl/Siete/ES/Siete/Cuadro/CAP_EI/MN_EI11/EI_PROD_BAS/637185066927145616?cbFechaInicio=2001&cbFechaTermino=2019&cbFrecuencia=MONTHLY&cbCalculo=NONE&cbFechaBase=
+
+Indice EMBI Global
+
+https://si3.bcentral.cl/Siete/ES/Siete/Cuadro/CAP_EI/MN_EI11/EI_EMBI/637184958408281857?cbFechaInicio=2001&cbFechaTermino=2019&cbFrecuencia=MONTHLY&cbCalculo=NONE&cbFechaBase=
+
+Indice IMACEC no minero, desestacionalizado
+
+https://si3.bcentral.cl/Siete/ES/Siete/Cuadro/CAP_CCNN/MN_CCNN76/CCNN2013_IMACEC_03/CCNN2013_IMACEC_03?cbFechaInicio=2001&cbFechaTermino=2019&cbFrecuencia=MONTHLY&cbCalculo=NONE&cbFechaBase=
+
+IPC SAE, Sin Alimentos ni Energ´ıa
+
+https://si3.bcentral.cl/Siete/ES/Siete/Canasta?cbFechaInicio=2001&cbFechaTermino=2019&cbFrecuencia=MONTHLY&cbCalculo=SIN_SELECCION&cbFechaBase=
+
+Tipo de cambio, pesos chilenos por dolar de EE.UU
+
+https://si3.bcentral.cl/Siete/ES/Siete/Cuadro/CAP_TIPO_CAMBIO/MN_TIPO_CAMBIO4/DOLAR_OBS_ADO?cbFechaInicio=2001&cbFechaTermino=2019&cbFrecuencia=MONTHLY&cbCalculo=NONE&cbFechaBase=
+
+Indice EMBI Chile
+
+https://si3.bcentral.cl/Siete/ES/Siete/Cuadro/CAP_ESTADIST_MACRO/MN_EST_MACRO_IV/PEM_ECIN_Precios/PEM_ECIN_Precios?cbFechaInicio=2001&cbFechaTermino=2019&cbFrecuencia=MONTHLY&cbCalculo=NONE&cbFechaBase=
+
+Tasa de Pol´ıtica Monetaria de Chile
+
+https://si3.bcentral.cl/Siete/ES/Siete/Cuadro/CAP_ESTADIST_MACRO/MN_EST_MACRO_IV/PEM_TPMyTASAS/PEM_TPMyTASAS?cbFechaInicio=2001&cbFechaTermino=2019&cbFrecuencia=MONTHLY&cbCalculo=NONE&cbFechaBase=
