@@ -32,8 +32,7 @@ summary(VAR)
 
 m <- VAR$K # Number of variables in the VAR
 T <- VAR$obs # Number of effective sample observations, excluding "p" starting values
-
-plot(VAR)
+  plot(VAR)
 
 # Manual plotting of residuals
 e <- resid(VAR)
@@ -181,7 +180,7 @@ H <- 12 # Forecast horizon
 a <- 0.95 # Confidence level
 
 # VAR Forecasts
-VAR.fcst <- predict(VAR, n.head = H, ci = a) # Residual normality assumption is relevant for confidence bands
+VAR.fcst <- predict(VAR, n.head = 25, ci = a) # Residual normality assumption is relevant for confidence bands
 VAR.fcst
 
 # Plotting Forecasts
@@ -191,6 +190,11 @@ fanchart(VAR.fcst)
 # Plotting Inflation Forecast
 plot(VAR.fcst, names = "pc")
 fanchart(VAR.fcst, names = "pc")
+
+
+plot(VAR.fcst, names = "pcom")
+fanchart(VAR.fcst, names = "pcom")
+
 
 # # Manual computation of Wald Test via SUR model
 # 
@@ -226,3 +230,4 @@ fanchart(VAR.fcst, names = "pc")
 # 
 # # Granger Causality Test, ER -> PC (Manual)
 # linearHypothesis(fitsur, Rmat, qvec, test = "F")
+
