@@ -1,13 +1,15 @@
 library("readxl")
+library("tstools")
 library("xts")
 library("zoo")
 library("vars")
 setwd("/home/francisco/Documentos/MEcon/T3/MacroEconometrics/Ejercitaciones/Ej1/Series")
 
-Data <- read_excel("data0.xlsx")
+my_data <- read_excel("data.xlsx")
 
-Data = ts(Data, start = c(2001, 01), frequency = 12)
+my_data = ts(my_data, start = c(2001, 01), frequency = 12)
 
+my_data <- subset(my_data, select= -Periodo)
 
 
 
@@ -22,69 +24,61 @@ Data = ts(Data, start = c(2001, 01), frequency = 12)
 ### Columna 7 : EMBI Global
 ### Columna 8 : Precio del cobre refinado.
 
-tpm_usa <- ts(Data[,2], start=c(2001,01),end=c(2019,12), frequency=12)
-p_cobre0 <- ts(Data[,3], start=c(2001,01),end=c(2019,12), frequency=12)
-embi_global <- ts(Data[,4], start=c(2001,01),end=c(2019,12), frequency=12)
-imacec0 <- ts(Data[,5], start=c(2001,01),end=c(2019,12), frequency=12)
-ipc_sae0 <- ts(Data[,6], start=c(2001,01),end=c(2019,12), frequency=12)
-tcn0 <- ts(Data[,7], start=c(2001,01),end=c(2019,12), frequency=12)
-embi_chile <- ts(Data[,8], start=c(2001,01),end=c(2019,12), frequency=12)
-tpm_chile <- ts(Data[,9], start=c(2001,01),end=c(2019,12), frequency=12)
 
 
 #### Convertimos los valores 
 
 ###  Logaritmo de indice de precios al consumidor multipllicado por 100
-ipc_sae <- 100 * log(ipc_sae0) 
-
+my_data[,c(2)] <- log(my_data[,c(2)])*100
 
 ### Logarito del IMACEC no minero, desestacionalizado multiplciado por 100
-imacec <- 100 * log(imacec0) 
+my_data[,c(1)] <- log(my_data[,c(1)])*100
 ### Logaritmo del tipo de cambio multiplicado por 100
-tcn <- 100 * log(tcn0) 
+my_data[,c(3)] <- log(my_data[,c(3)])*100
 
 ### Logaritmo del precio de l cobre *100
-p_cobre <- 100 * log(p_cobre0) 
+my_data[,c(8)] <- log(my_data[,c(8)])*100
 
+colnames(my_data) <- c("IMACEC", "IPC", "TCN", "EMBI_L", "TPM_L", "TPM_I", "EMBI_G", "COBRE")
 
 
 ### Grafico 1 : Imacec No minero
 
-plot(imacec, col = "black", main = "IMACEC no minero"
+plot(my_data[,c(1)], col = "black", main = "IMACEC no minero"
      ,xlab="Fecha")
 
 ### Gráfico 2 : IPC SAE Histórico
 
-plot(ipc_sae, col = "black", main = "Indice de precios al consumidor SAE"
+plot(my_data[,c(2)], col = "black", main = "Indice de precios al consumidor SAE"
      ,xlab="Fecha")
 ### Gráfico 3 : Tipo de cambio nominal
 
-plot(tcn, col = "black", main = "Tipo de cambio nominal"
+plot(my_data[,c(3)], col = "black", main = "Tipo de cambio nominal"
      ,xlab="Fecha")
 
 ### Gráfico 4 : EMBI Chile
 
-plot(embi_chile, col = "black", main = "EMBI Chile"
+plot(my_data[,c(4)], col = "black", main = "EMBI Chile"
      ,xlab="Fecha")
 
 ### Gráfico 5 : TASA DE POLITCA MONETARIA (PORCENTAJE)
 
-plot(tpm_chile, col = "black", main = "Tasa de política monetaria local - Chile"
+plot(my_data[,c(5)], col = "black", main = "Tasa de política monetaria local - Chile"
      ,xlab="Fecha")
 
 ### Gráfico 6 : TASA DE POLÏTICA MONETARIA EXTRANJERA (EEUU)
 
-plot(tpm_usa, col = "black", main = "Tasa de política monetaria extranjera"
-     ,xlab="Fecha")
+plot(my_data[,c(6)], col = "black", main = "Tasa de política monetaria extranjera"
+     ,xlab="Fecha",type=1)
 
 ### Gráfico 7 : EMBI Global
 
-plot(embi_global, col = "black", main = "EMBI Global"
+plot(my_data[,c(7)], col = "black", main = "EMBI Global"
      ,xlab="Fecha",type="l")
 
 ### Gráfico 8 : Precio del cobre refinado.
 
-plot(p_cobre, col = "black", main = "Logaritmo del precio de cobre refinado"
+plot(my_data[,c(8)], col = "black", main = "Logaritmo del precio de cobre refinado"
      ,xlab="Fecha")
 
 
@@ -98,7 +92,7 @@ lag_m = 12
 
 #### Modelo 1
 #### EMBI GLOBAL VS OTRAS
-modelo1 <- cbind(embi_chile,ipc_sae,imacec,tpm_chile,tcn,embi_global)
+modelo1 <- my_data[,-c(7:8)]
 
 ### Estimacion del lag
 
@@ -128,14 +122,12 @@ plot(VAR1)
 # Granger Causality ####
 
 # GC Test, Local Vars. -> PCOM (asymptotic) 
-  VAR.GC.test.boot <- causality(VAR1, cause = c("embi_chile","ipc_sae",
-                                                "imacec","tpm_chile","tcn")
-                                , boot = TRUE, boot.runs = 2000)
-  VAR.GC.test.boot
+  VAR.GC.test.asym <- causality(VAR1, cause = c("IMACEC", "IPC", "TCN", "EMBI_L", "TPM_L"))
   
+  VAR.GC.test.asym
+
 # GC Test, Local Vars. -> PCOM (bootstrap)
-VAR.GC.test.boot <- causality(VAR1, cause = c("embi_chile","ipc_sae",
-                              "imacec","tpm_chile","tcn")
+VAR.GC.test.boot <- causality(VAR1, cause = c("IMACEC", "IPC", "TCN", "EMBI_L", "TPM_L")
                               , boot = TRUE, boot.runs = 2000)
 VAR.GC.test.boot
 
@@ -187,22 +179,6 @@ q <- 3
 # Multivariate ARCH Test
 VAR.ARCH.test <- arch.test(VAR1, lags.multi = 12, multivariate.only = FALSE)
 VAR.ARCH.test
-
-
-
-
-matC <- function(m, p, vx) {
-  vy <- setdiff(1:m, vx)
-  Cm <- matrix(1, m, m * p + 1)
-  for (i in vx) {
-    for (l in 1:p) {
-      for (j in vy) {
-        Cm[i, m * (l - 1) + j] <- 0
-      }
-    }
-  }
-  Cm
-}
 
 
 
