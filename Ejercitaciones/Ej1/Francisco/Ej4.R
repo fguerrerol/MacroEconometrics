@@ -156,7 +156,24 @@ ts.plot(diff(my_data[,c(9)]), type="l", lwd=2, xlab="",ylab="%",bty="n", main = 
 
 
 
+#Locales
+ipc_sae         <- ts(diff(my_data[,c(6)]))
 
+tcn_var         <- ts(diff(my_data[,c(7)]))
+
+imacec_var      <- ts(diff(my_data[,c(5)]))
+
+ltpm_var        <- ts(diff(my_data[,c(9)]))
+
+embi_local_var  <- ts(diff(my_data[,c(8)]))
+
+#Internacionales
+
+itpm_var         <- ts(diff(my_data[,c(2)]))
+
+cobre_var        <- ts(diff(my_data[,c(3)]))
+
+embi_global_var  <- ts(diff(my_data[,c(4)]))
 
 
 
@@ -164,97 +181,84 @@ ts.plot(diff(my_data[,c(9)]), type="l", lwd=2, xlab="",ylab="%",bty="n", main = 
 ####
 lag_m = 12
 
-#### Modelo 1
-#### EMBI GLOBAL VS OTRAS
-modelo1 <- cbind(embi_chile,ipc_sae,imacec,tpm_chile,tcn,embi_global)
 
-### Estimacion del lag
+####### Modelos VAR
 
+
+
+modelo1 <- cbind(itpm_var,
+                 ipc_sae,
+                 tcn_var,
+                 imacec_var,
+                 ltpm_var,
+                 embi_local_var)
+
+modelo2 <- cbind(cobre_var,
+                 ipc_sae,
+                 tcn_var,
+                 imacec_var,
+                 ltpm_var,
+                 embi_local_var)
+
+
+modelo3 <- cbind(embi_global_var,
+                 ipc_sae,
+                 tcn_var,
+                 imacec_var,
+                 ltpm_var,
+                 embi_local_var)
 
 popt <- VARselect(modelo1, lag.max = lag_m, type = "const")
 
 p_1 <- popt$selection[2] 
 
-
-### Estimacion del primer VAR
 VAR1 <- VAR(modelo1, p = p_1, type = "const") # Inclusion of exogenous variables is also possible
 summary(VAR1)
 
 
-
-m_1 <- VAR1$K # Number of variables in the VAR
-T_1 <- VAR1$obs # Number of effective sample observations, excluding "p" starting values
-plot(VAR1)
-
-
-# Manual plotting of residuals
-  e <- resid(VAR1)
-  e <- ts(e, end = end(modelo1), frequency = frequency(modelo1))
-  colnames(e) <- paste("e.", colnames(modelo1), sep = "")
-  plot(e, main = "Residuals")
-
-# Granger Causality ####
-
-# GC Test, Local Vars. -> PCOM (asymptotic) 
-  VAR.GC.test.boot <- causality(VAR1, cause = c("embi_chile","ipc_sae",
-                                                "imacec","tpm_chile","tcn")
-                                , boot = TRUE, boot.runs = 2000)
-  VAR.GC.test.boot
-  
-# GC Test, Local Vars. -> PCOM (bootstrap)
-VAR.GC.test.boot <- causality(VAR1, cause = c("embi_chile","ipc_sae",
-                              "imacec","tpm_chile","tcn")
-                              , boot = TRUE, boot.runs = 2000)
-VAR.GC.test.boot
+IRF1 <- irf(VAR1, impulse="itpm_var",
+            response= c("embi_local_var","ipc_sae",
+                        "tcn_var","ltpm_var","imacec_var"),
+            boot=FALSE, runs=100)
+plot(IRF1)
 
 
 
+### Estimacion del primer VAR
 
-# VAR stability
+popt <- VARselect(modelo2, lag.max = lag_m, type = "const")
 
-# Eigenvalues
-VAR.roots <- roots(VAR1, modulus = TRUE)
-VAR.roots
-
-# Residual Serial Correlation
-
-h.PT <- min(10, trunc(T_1 / 5)) # Rule of thumb for Portmanteau tests (Rob Hyndman) # https://robjhyndman.com/hyndsight/ljung-box-test/
-# Portmanteau Test
-VAR.PT.test.serial <- serial.test(VAR1, lags.pt = h.PT, type = "PT.asymptotic")
-VAR.PT.test.serial
-
-#Se tiene un p-valor de 0.067 con lo cual no se rechaza la hipótesis nula y no se tiene autocorrelacion
-
-
-# Portmanteau Test (adjusted)
-VAR.PT.test.serial.adj <- serial.test(VAR1, lags.pt = h.PT, type = "PT.adjusted") # Small sample correc.
-VAR.PT.test.serial.adj
-
-#### Hacinedo el test ajustado de Portmanteu vemos que no se rechaza la hipótesis nula.
+p_2 <- popt$selection[2] 
 
 
 
-h.BG <- 3
-# Breusch-Godfrey Test
-VAR.BG.test.serial <- serial.test(VAR1, lags.bg = h.BG, type = "BG")
-VAR.BG.test.serial
+VAR2 <- VAR(modelo2, p = p_2, type = "const") # Inclusion of exogenous variables is also possible
+summary(VAR2)
 
-# Breusch-Godfrey Test (adjusted)
-VAR.BG.test.serial.adj<- serial.test(VAR1, lags.bg = h.BG, type = "ES") # Small sample correc.
-VAR.BG.test.serial.adj
+IRF2 <- irf(VAR2, impulse="cobre_var",
+            response= c("embi_local_var","ipc_sae",
+                        "tcn_var","ltpm_var","imacec_var"),
+            boot=FALSE, runs=100)
+plot(IRF2)
 
-# Residual Normality
+### Estimacion del primer VAR
 
-# Multivariate Jarque-Bera Test
-VAR.JB.test <- normality.test(VAR1, multivariate.only = FALSE)
-VAR.JB.test
+popt <- VARselect(modelo3, lag.max = lag_m, type = "const")
 
-# Residual Heteroskedasticity
+p_3 <- popt$selection[2] 
 
-q <- 3
-# Multivariate ARCH Test
-VAR.ARCH.test <- arch.test(VAR1, lags.multi = 12, multivariate.only = FALSE)
-VAR.ARCH.test
+
+VAR3 <- VAR(modelo3, p = p_3, type = "const") # Inclusion of exogenous variables is also possible
+summary(VAR3)
+
+
+IRF3 <- irf(VAR3, impulse="embi_global_var",
+            response= c("embi_local_var","ipc_sae",
+                        "tcn_var","ltpm_var","imacec_var"),
+            boot=FALSE, runs=100)
+plot(IRF3)
+
+
 
 
 
