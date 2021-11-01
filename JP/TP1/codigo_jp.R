@@ -6,8 +6,8 @@ library("readxl")
 # library("zoo")
 # library("vars")
 
-my_data <- read_excel("data0.xlsx")
-my_data = ts(my_data, start = c(2001, 1) , end=c(2019,12), frequency = 12)
+df <- read_excel("data0.xlsx")
+my_data = ts(df, start = c(2001, 1) , end=c(2019,12), frequency = 12)
 
 plot (my_data[,2])
 
@@ -24,7 +24,7 @@ my_data[,c(6)] <- log(my_data[,c(6)])*100
  # TCN
 my_data[,c(7)] <- log(my_data[,c(7)])*100
 
-#### Puntos 2 ####
+#### Punto 2 ####
 ### graficos en niveles ###
 
 par(mfrow=c(4,2),mar=c(2, 2, 2, 2))
@@ -126,6 +126,13 @@ summary(ur.df((diff(my_data[,8])),type="drift",selectlags="BIC")) # rechaza h0 a
 summary(ur.df((diff(my_data[,8])),type="trend",selectlags="BIC")) # rechaza h0 al 1%
 
 
+summary(ur.pp(my_data[,8], type="Z-tau", model="trend",lags="long"))
+summary(ur.pp(diff(my_data[,8]), type="Z-tau", model="constant",lags="long"))
+
+summary(ur.kpss(my_data[,8],type="tau",lags="long"))
+summary(ur.kpss(diff(my_data[,8]),type="mu",lags="long"))
+
+
 ### Tasa de Politica Monetaria de Chile es I(1) al 1%, I(0) al 5% ###
 
 ### ADF (Augmented Dickey-Fuller)  h0 = no estacionariedad ###
@@ -148,5 +155,96 @@ ts.plot(diff(my_data[,c(6)]), type="l", lwd=2, xlab="",ylab="",bty="n", main = "
 ts.plot(diff(my_data[,c(7)]), type="l", lwd=2, xlab="",ylab="$",bty="n", main = "TCN en ln por 100") 
 ts.plot(diff(my_data[,c(8)]), type="l", lwd=2, xlab="",ylab="",bty="n", main = "Indice EMBI Chile ") 
 ts.plot(diff(my_data[,c(9)]), type="l", lwd=2, xlab="",ylab="%",bty="n", main = "Tasa de Politica Monetaria de Chile") 
+
+# hay que incluir las series en diferencias para que sean estacionarias
+
+#### Punto 3 ####
+
+reg <- lm( diff(my_data[,c(5)]) ~  diff((my_data[,c(10)])) +
+             diff((my_data[,c(11)])) + diff((my_data[,c(12)])))
+imacec_limpio <- ts(reg$residuals, start=c(2001,02),end=c(2019,12), frequency=12)
+descarte <- ts(reg[["fitted.values"]], start=c(2001,02),end=c(2019,12), frequency=12)
+
+par(mfrow=c(3,1))
+ts.plot(diff(my_data[,c(5)]), type="l", lwd=2, xlab="",ylab="",bty="n", main = "Imacec no minero en ln por 100") 
+ts.plot(imacec_limpio, type="l", lwd=2, xlab="",ylab="",bty="n", main = "Residuos - Imacec no minero limpio") 
+ts.plot(descarte, type="l", lwd=2, xlab="",ylab="",bty="n", main = "Terremoto y conflicto social sobre Imacec no minero") 
+
+#### Punto 3 version Mariana ####
+diff_imacec.log <-diff(my_data[,c(5)])
+dum2 <- data.frame(time=time(diff_imacec.log), 
+                   Value=as.matrix(diff_imacec.log))
+dum2 <- as.character.Date(dum2)
+dum2$d1 <- ifelse(dum2$time=="2010.167",1,0)
+dum2$d2 <- ifelse(dum2$time=="2010.250",1,0)
+dum2$d3 <- ifelse(dum2$time=="2019.917",1,0)
+dum2$d4 <- ifelse(dum2$time=="2019.750",1,0)
+
+reg2 <- lm(dum2$Value~dum2$d1+dum2$d2+dum2$d3+dum2$d4)
+new_imac2 <- reg2$residuals
+new_imac2 <- ts(new_imac2, start=c(2001,02), frequency = 12)
+
+par(mfrow=c(3,1))
+ts.plot(new_imac2, type="l", lwd=2, xlab="",ylab="",bty="n", main = "Ellos") 
+ts.plot(imacec_limpio, type="l", lwd=2, xlab="",ylab="",bty="n", main = "Nuestro") 
+ts.plot(imacec_limpio - new_imac2 , type="l", lwd=2, xlab="",ylab="",bty="n", main = "resta") 
+
+# Para el documento 
+descarte <- ts(reg2[["fitted.values"]], start=c(2001,02),end=c(2019,12), frequency=12)
+
+
+par(mfrow=c(3,1))
+ts.plot(diff(my_data[,c(5)]), type="l", lwd=2, xlab="",ylab="",bty="n", main = "Imacec no minero en ln por 100") 
+ts.plot(new_imac2, type="l", lwd=2, xlab="",ylab="",bty="n", main = "Residuos - Imacec no minero limpio") 
+ts.plot(descarte, type="l", lwd=2, xlab="",ylab="",bty="n", main = "Terremoto y conflicto social sobre Imacec no minero") 
+
+
+#### punto 4 ####
+
+# Modelo 1 : la internacional es TPM_USA
+
+modelo_1 <- cbind(diff(my_data[,c(2)]), 
+                  new_imac2,
+                  diff(my_data[,c(6)]), diff(my_data[,c(7)]),
+                  diff(my_data[,c(8)]), diff(my_data[,c(9)]))
+
+library(vars)
+var_1 <- VARselect(modelo_1, lag.max = 15, type = "const")
+var_1
+p_1 <- var_1$selection[1] # AIC(n)
+
+# El mejor modelo uno es un VAR(3) segun AIC(n)
+VAR1 <- VAR(modelo_1, p = p_1, type = "const")
+summary(VAR1)
+
+# Manual plotting of residuals
+e <- resid(VAR1)
+e <- ts(e, end = end(modelo_1), frequency = frequency(modelo_1))
+colnames(e) <- c(1,2,3,4,5,6)
+plot(e, main = "Residuals")
+
+# VAR stability
+
+# Eigenvalues son menores a 1 - entonces el VAR es estable
+VAR1.roots <- roots(VAR1, modulus = TRUE)
+VAR1.roots
+
+T_1 <- VAR1$obs
+# Residual Serial Correlation
+h.PT <- min(10, trunc(T_1 / 5)) # Rule of thumb for Portmanteau tests (Rob Hyndman) # https://robjhyndman.com/hyndsight/ljung-box-test/
+# Portmanteau Test
+VAR1.PT.test.serial <- serial.test(VAR1, lags.pt = h.PT, type = "PT.asymptotic")
+VAR1.PT.test.serial
+# rechazamos la hipótesis nula de que los errores no están autocorrelacionados
+# osea que hay un problema de autocorrelacion de los errores 
+
+# Portmanteau Test (adjusted)
+VAR1.PT.test.serial.adj <- serial.test(VAR1, lags.pt = h.PT, type = "PT.adjusted") # Small sample correc.
+VAR1.PT.test.serial.adj
+# lo re rechaza
+
+# Test de normalidad de los residuos: rechazado
+VAR1.JB.test <- normality.test(VAR1, multivariate.only = FALSE)
+VAR1.JB.test
 
 

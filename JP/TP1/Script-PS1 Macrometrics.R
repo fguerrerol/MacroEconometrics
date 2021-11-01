@@ -24,7 +24,7 @@ ipc_sae <- 100 * log(ipc_sae0)
 tcn <- 100 * log(tcn0) 
 
 
-#######################Ejercicio 2####################3
+####################### Ejercicio 2 ####################
 plot(p_cobre0, col = "blue", main = "Precio Internacional del Cobre sin log ",xlab="Fecha",ylab = "Precio Internacional del Cobre", ylim=c(0,5))
 
 #Graficamos las variables:
