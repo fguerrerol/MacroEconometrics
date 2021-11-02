@@ -246,24 +246,31 @@
   
   
   matC <- function(m, p, vx) {
-    vy <- setdiff(1:m, vx)
     Cm <- matrix(1, m, m * p + 1)
+    listos <- vector()
     for (i in vx) {
+      vy <- setdiff(1:m,i)
+      vy <- setdiff(vy,listos)
       for (l in 1:p) {
         for (j in vy) {
           Cm[i, m * (l - 1) + j] <- 0
         }
       }
+      listos <- c(listos,i)
     }
     Cm
   }
   
- 
+  
+  Cm <- matrix(1, 3, 3 * 2 + 1)
+  m = 3
+  
+  vy <- setdiff(1:m, vx)
   
   
   
   
-constraints <- matC(m, p, 1)
+Cmconstraints <- matC(m, p, 1)
   VAR1a <- restrict(VAR1, method = "man", resmat = constraints)
   VAR1a
   
