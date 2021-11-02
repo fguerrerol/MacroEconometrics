@@ -11,6 +11,39 @@ plot.sirf <- function(X, m, H) {
   }
 }
 
+get.sirf <- function(X, m, H) {
+    for (i in 1:m) {
+      par(mfrow = c(m/2, 2))
+      for (j in 1:m) {
+        plot(0:H, X[j, i, ],
+             main = paste("Response of", dimnames(X)[[1]][j], "to", dimnames(X)[[1]][i], "shock", sep = " "),
+             xlab = "Horizon", ylab = "",
+             type = "o", lwd = 2)
+        grid(NULL, NULL, lty = 1)
+      }
+    }
+  }
+
+
+get.sirf.boot <- function(X, m, H) {
+  for (i in 1:m) {
+    par(mfrow = c(m/2, 2))
+    for (j in 1:m) {
+      plot(0:H, X$pe[j, i, ],
+           main = paste("Response of", dimnames(X$pe)[[1]][j], "to", dimnames(X$pe)[[1]][i], "shock", sep = " "),
+           xlab = "Horizon", ylab = "",
+           ylim = c(min(X$lb[j, i, ]), max(X$ub[j, i, ])),
+           type = "o", lwd = 2)
+      grid(NULL, NULL, lty = 1)
+      xx <- c(0:H, H:0)
+      yy <- c(c(X$lb[j, i, ]), rev(c(X$ub[j, i, ])))
+      polygon(xx, yy, col = adjustcolor("grey", alpha.f = 0.5), border = NA)
+    }
+  }
+}
+
+
+
 plot.fevd <- function(X, m, H) {
   par(mfrow = c(1, 1))
   for (i in 1:m) {

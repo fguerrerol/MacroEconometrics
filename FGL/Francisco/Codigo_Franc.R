@@ -3,9 +3,13 @@
   library("xts")
   library("zoo")
   library("vars")
-  setwd("/home/francisco/Documentos/MEcon/T3/MacroEconometrics/Ejercitaciones/Ej1/Series")
+  
+  setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+  
   source("PS2_SVAR_Tools.R")
   source("PS2_SVAR_Plots.R")
+  setwd("/home/francisco/Documentos/MEcon/T3/MacroEconometrics/Ejercitaciones/Ej1/Series")
+
   df <- read_excel("data0.xlsx")
   my_data = ts(df, start = c(2001, 1) , end=c(2019,12), frequency = 12)
   
@@ -326,7 +330,7 @@ get.sirf.boot(IRF1.boot, m, H)
 
 
 
-
+###### Modelo 2#######
 
 modelo_2 <- cbind(cobre, 
                   imacec,
