@@ -1,9 +1,9 @@
 plot.sirf <- function(X, m, H) {
   for (i in 1:m) {
     par(mfrow = c(m, 1))
-    for (j in 1:m) {
-      plot(0:H, X[i, j, ],
-           main = paste("Response of", dimnames(X)[[1]][i], "to", dimnames(X)[[2]][j], "shock", sep = " "),
+    for (j in 2:m) {
+      plot(0:H, X[j, i, ],
+           main = paste("Response of", dimnames(X)[[1]][j], "to", dimnames(X)[[2]][i], "shock", sep = " "),
            xlab = "Horizon", ylab = "",
            type = "o", lwd = 2)
       grid(NULL, NULL, lty = 1)

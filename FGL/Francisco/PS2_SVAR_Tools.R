@@ -13,10 +13,10 @@ companion <- function(Phi, m, p) {
 var2vma <- function(Phi, P, m, p, H) {
   F <- companion(Phi, m, p)
   F.temp <- F
-  I <- array(NA, c(3, 3, H + 1))
+  I <- array(NA, c(m, m, H + 1))
   I[, , 1] <- P
   for (h in 1:H) {
-    I[, , h + 1] <- F.temp[1:3, 1:3] %*% P
+    I[, , h + 1] <- F.temp[1:m, 1:m] %*% P
     F.temp <- F.temp %*% F
   }
   I
