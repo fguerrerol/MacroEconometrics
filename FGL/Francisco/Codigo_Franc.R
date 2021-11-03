@@ -524,7 +524,7 @@ modelo_e5 <- cbind(tpm_usa,
 
 var_5 <- VARselect(modelo_e5, lag.max = 20, type = "const")
 var_5
-p<- var_5$selection[1] # AIC(n)
+p<- var_5$selection[4] # AIC(n)
   
 
 # El mejor modelo uno es un VAR(3) segun AIC(n)
@@ -535,66 +535,77 @@ summary(VAR5)
 m <- VAR5$K # Number of variables in the VAR
 T <- VAR5$obs # Number of effective sample observations, excluding "p" starting values
 
+constraints5a <- matC(m, p, c(1,2,3))
+VAR5a <- restrict(VAR5, method = "man", resmat = constraints5a)
+VAR5a
 
 
-# Manual plotting of residuals
-e <- resid(VAR5)
-e <- ts(e, end = end(modelo_e5), frequency = frequency(modelo_e5))
-colnames(e) <- c(1,2,3,4,5,6,7,8)
-plot(e, main = "Residuals")
-
-VAR.GC.test.boot <- causality(VAR5, cause = c("ipc_sae",
-                                              "imacec",
-                                              "tcn",
-                                              "embi_chile",
-                                              "tpm_chile")
-                              , boot = TRUE, boot.runs = 2000)
-VAR.GC.test.boot
+constraints5b <- matC(m, p, c(2,1,3))
+VAR5b <- restrict(VAR5, method = "man", resmat = constraints5b)
+VAR5b
 
 
+Amat <- diag(m)
+for (i in 2:m) {
+  for (j in 1:(i - 1)) {
+    Amat[i, j] <- NA
+  }
+}
+
+# B Matrix
+Bmat <- matrix(0, m, m)
+for (i in 1:m) {
+  Bmat[i, i] <- NA
+}
 
 
+roots(VAR5a, modulus = TRUE)
 
 
-
-
-
-
-
-
-
-
-
-
+roots(VAR5b, modulus = TRUE)
 
 
 
 
 
-###
-# VAR stability
+Y5a.boot <- boot.replicate(VAR5a, R, type)
+SVAR5a <- SVAR(VAR5a, Amat = Amat, Bmat = Bmat, lrtest= FALSE)
+SVAR5a
 
-# Eigenvalues son menores a 1 - entonces el VAR es estable
-VAR1.roots <- roots(VAR1, modulus = TRUE)
-VAR1.roots
 
-T_1 <- VAR1$obs
-# Residual Serial Correlation
-h.PT <- min(10, trunc(T_1 / 5)) # Rule of thumb for Portmanteau tests (Rob Hyndman) # https://robjhyndman.com/hyndsight/ljung-box-test/
-# Portmanteau Test
-VAR1.PT.test.serial <- serial.test(VAR1, lags.pt = h.PT, type = "PT.asymptotic")
-VAR1.PT.test.serial
-# rechazamos la hip?tesis nula de que los errores no est?n autocorrelacionados
-# osea que hay un problema de autocorrelacion de los errores 
+IRF5a.boot <- SVAR.sirf.boot(SVAR5a, Amat, Bmat, H, gamma, Y5a.boot)
+get.sirf.boot(IRF5a.boot, m, H)
 
-# Portmanteau Test (adjusted)
-VAR1.PT.test.serial.adj <- serial.test(VAR1, lags.pt = h.PT, type = "PT.adjusted") # Small sample correc.
-VAR1.PT.test.serial.adj
-# lo re rechaza
 
-# Test de normalidad de los residuos: rechazado
-VAR1.JB.test <- normality.test(VAR1, multivariate.only = FALSE)
-VAR1.JB.test
+
+Y5b.boot <- boot.replicate(VAR5b, R, type)
+SVAR5b <- SVAR(VAR5b, Amat = Amat, Bmat = Bmat, lrtest= FALSE)
+SVAR5b
+
+
+IRF5b.boot <- SVAR.sirf.boot(SVAR5b, Amat, Bmat, H, gamma, Y5b.boot)
+get.sirf.boot(IRF5b.boot, m, H)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
