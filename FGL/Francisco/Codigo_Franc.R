@@ -587,6 +587,67 @@ IRF5b.boot <- SVAR.sirf.boot(SVAR5b, Amat, Bmat, H, gamma, Y5b.boot)
 get.sirf.boot(IRF5b.boot, m, H)
 
 
+##### Ejercicio 7 #####
+## Seleccionamos la 2da hsiotria, para esto lebaromas el modelo con 4 variables#
+
+
+modelo7 <-cbind(tpm_usa,
+                cobre,
+                embi_global, 
+                imacec)
+
+
+
+var_7 <- VARselect(modelo7, lag.max = 20, type = "const")
+var_7
+p<- var_5$selection[4] # AIC(n)
+
+
+# El mejor modelo uno es un VAR(3) segun AIC(n)
+VAR7 <- VAR(modelo7, p = p, type = "const")
+summary(VAR7)
+
+granger_boot_modelo7 <- causality(VAR7, cause = c("imacec")
+                                  , boot = TRUE, boot.runs = 2000)
+granger_boot_modelo7
+
+m <- VAR7$K # Number of variables in the VAR
+T <- VAR7$obs # Number of effective sample observations, excluding "p" starting values
+
+constraints7 <- matC(m, p, c(2,1,3))
+VAR7 <- restrict(VAR7, method = "man", resmat = constraints7)
+VAR7
+
+
+
+Amat <- diag(m)
+for (i in 2:m) {
+  for (j in 1:(i - 1)) {
+    Amat[i, j] <- NA
+  }
+}
+
+# B Matrix
+Bmat <- matrix(0, m, m)
+for (i in 1:m) {
+  Bmat[i, i] <- NA
+}
+
+
+roots(VAR7, modulus = TRUE)
+
+
+
+
+
+Y7boot <- boot.replicate(VAR7, R, type)
+SVAR7 <- SVAR(VAR7, Amat = Amat, Bmat = Bmat, lrtest= FALSE)
+SVAR7
+
+
+IRF7.boot <- SVAR.sirf.boot(SVAR7, Amat, Bmat, H, gamma, Y7boot)
+get.sirf.boot(IRF7.boot, m, H)
+
 
 
 
