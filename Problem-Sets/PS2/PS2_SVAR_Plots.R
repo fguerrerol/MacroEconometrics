@@ -92,6 +92,34 @@ plot.erpt <- function(X, H) {
   grid(NULL, NULL, lty = 1)
 }
 
+
+plot.erpt2 <- function(X, H) {
+  par(mfrow = c(1, 1))
+  plot(0:H, X,
+       main = "Tasa de cambio nominal pass-through 
+              precios internacionales",
+       xlab = "Horizon", ylab = "%",
+       type = "o", lwd = 2)
+  grid(NULL, NULL, lty = 1)
+}
+
+
+
+plot.erpt3 <- function(X, H) {
+  par(mfrow = c(1, 1))
+  plot(0:H, X,
+       main = "Tasa de cambio nominal pass-through 
+              índice de precios al consumidor",
+       xlab = "Horizon", ylab = "%",
+       type = "o", lwd = 2)
+  grid(NULL, NULL, lty = 1)
+}
+
+
+
+
+
+
 plot.sirf.boot <- function(X, m, H) {
   for (i in 1:m) {
     par(mfrow = c(m, 1))

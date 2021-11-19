@@ -8,7 +8,7 @@
   
   source("PS2_SVAR_Tools.R")
   source("PS2_SVAR_Plots.R")
-  setwd("/home/francisco/Documentos/MEcon/T3/MacroEconometrics/Ejercitaciones/Ej1/Series")
+ 
 
   df <- read_excel("data0.xlsx")
   my_data = ts(df, start = c(2001, 1) , end=c(2019,12), frequency = 12)
@@ -260,17 +260,11 @@
     }
     Cm
   }
-  
-  
-  Cm <- matrix(1, 3, 3 * 2 + 1)
-  m = 3
-  
-  vy <- setdiff(1:m, vx)
+
   
   
   
-  
-Cmconstraints <- matC(m, p, 1)
+constraints <- matC(m, p, 1)
   VAR1a <- restrict(VAR1, method = "man", resmat = constraints)
   VAR1a
   
@@ -278,10 +272,7 @@ Cmconstraints <- matC(m, p, 1)
   roots(VAR1a, modulus = TRUE)
   
 
-  modelo <- cbind(tpm_usa,
-                  embi_global,
-                  cobre,
-                  )
+  
 
   
   
@@ -309,7 +300,7 @@ Cmconstraints <- matC(m, p, 1)
   SVAR1 <- SVAR(VAR1a, Amat = Amat, Bmat = Bmat, lrtest= FALSE)
   SVAR1
   
-  P <- solve(SVAR$A, SVAR$B) # inv(A) %*% B
+  P <- solve(SVAR1$A, SVAR1$B) # inv(A) %*% B
   S.SVAR <- P %*% t(P)
   S.SVAR
   
@@ -388,8 +379,6 @@ VAR2a
 roots(VAR2a, modulus = TRUE)
 
 
-source("PS2_SVAR_Tools.R")
-source("PS2_SVAR_Plots.R")
 
 
 ######
@@ -401,7 +390,7 @@ SVAR2
 
 
 
-P <- solve(SVAR$A, SVAR$B) # inv(A) %*% B
+P <- solve(SVAR2$A, SVAR2$B) # inv(A) %*% B
 S.SVAR <- P %*% t(P)
 S.SVAR
 
@@ -420,8 +409,6 @@ gamma <- 0.95 # Confidence level
 
 # Bootstrap Replications
 Y.boot <- boot.replicate(VAR2a, R, type)
-
-
 
 IRF2.boot <- SVAR.sirf.boot(SVAR2, Amat, Bmat, H, gamma, Y.boot)
 get.sirf.boot(IRF2.boot, m, H)
@@ -492,7 +479,7 @@ SVAR3
 
 
 
-P <- solve(SVAR$A, SVAR$B) # inv(A) %*% B
+P <- solve(SVAR3$A, SVAR3$B) # inv(A) %*% B
 S.SVAR <- P %*% t(P)
 S.SVAR
 
@@ -505,7 +492,7 @@ Y.boot <- boot.replicate(VAR3a, R, type)
 
 
 
-IRF3.boot <- SVAR.sirf.boot(SVAR, Amat, Bmat, H, gamma, Y.boot)
+IRF3.boot <- SVAR.sirf.boot(SVAR3, Amat, Bmat, H, gamma, Y.boot)
 get.sirf.boot(IRF3.boot, m, H)
 
 
@@ -534,6 +521,15 @@ summary(VAR5)
 
 m <- VAR5$K # Number of variables in the VAR
 T <- VAR5$obs # Number of effective sample observations, excluding "p" starting values
+
+
+granger_boot_modelo5 <- causality(VAR5, cause = c("ipc_sae",
+                                                  "imacec",
+                                                  "tcn",
+                                                  "embi_chile",
+                                                  "tpm_chile")
+                                  , boot = TRUE, boot.runs = 2000)
+granger_boot_modelo5
 
 constraints5a <- matC(m, p, c(1,2,3))
 VAR5a <- restrict(VAR5, method = "man", resmat = constraints5a)
@@ -651,6 +647,61 @@ get.sirf.boot(IRF7.boot, m, H)
 
 
 
+### Ejercicio 8#####
+
+m=8
+p=3
+
+
+modelo_e5 <- cbind(tpm_usa,
+                   cobre,
+                   embi_global, 
+                   imacec,
+                   ipc_sae,
+                   tcn,
+                   embi_chile,
+                   tpm_chile)
+
+boots.fun <- function(g7) {
+  var <- VAR(g7, p = 3, type = "const")
+  constraints5b <- matC(8, 3, c(2,1,3))
+  var_r <- restrict(var,method = "man", resmat = constraints5b)
+  m <- var$K # Number of variables in the VAR
+  
+  Amat2 <- diag(m)
+  for (i in 2:m) {
+    for (j in 1:(i - 1)) {
+      Amat2[i, j] <- NA
+    }
+  }
+  
+  Bmat2 <- matrix(0, m, m)
+  for (i in 1:m) {
+    Bmat2[i, i] <- NA
+  }
+  svar <- SVAR(var_r, Amat = Amat2, Bmat = Bmat2, lrtest= FALSE)
+  IRF.boot <- SVAR.sirf(svar,H)
+}
+
+library("boot")
+
+modelo_e5 <- cbind(tpm_usa,
+                   cobre,
+                   embi_global, 
+                   imacec,
+                   ipc_sae,
+                   tcn,
+                   embi_chile,
+                   tpm_chile)
+
+
+# Number of bootstrap replications
+type <- "nonparametric"
+gamma <- 0.95 # Confidence level
+H<-4
+tsboot <- tsboot(modelo_e5, boots.fun, R = 500, l = 12, sim = "fixed")
+
+plot(tsboot$t0[1,1,])
 
 
 
