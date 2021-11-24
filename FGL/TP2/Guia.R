@@ -17,7 +17,11 @@ library("xts")
 library("zoo")
 library("vars")
 library("tidyverse")
-
+library("ggthemes")
+library("ggplot2")
+library("forecast")
+library("seas")
+library("stargazer")
 
 ##### Ejercicio 1 ##### 
 
@@ -49,13 +53,28 @@ source("PS3_SIRF_Transform.R")
 source("PS3_SVAR_LR.R")
 source("PS3_LP_Tools.R")
 
+plot_traspaso <-function(I,title){
+  H <- length(I$pe) - 1
+  par(mfrow = c(1, 1))
+  plot(0:H, I$pe,main= title,
+       xlab = "Horizonte", ylab = "",
+       ylim = c(min(I$lb), max(I$ub)),
+       type = "o", lwd = 2)
+  grid(NULL, NULL, lty = 1)
+   xx <- c(0:H,H:0)
+  yy <- c(c(I$lb), rev(c(I$ub)))
+  polygon(xx, yy, col = adjustcolor("grey", alpha.f = 0.5), border = NA)
+}
+
+
+
 m2 <- read_excel("M2.xls",sheet=2)
 m2 = ts(m2[-(1),2], start = c(1986, 1) , frequency = 12)
 
 
 
 tdc_nom <- read_excel("tdc_nominal.xls")
-tdc_nom = ts(tdc_nom[-(1),2], start = c(2002, 1) , frequency = 12)
+tdc_nom = ts(tdc_nom[-(1),2], start = c(2002, 3) , frequency = 12)
 
 
 ipc <- read.csv("ipc_1943_act.csv")
@@ -65,8 +84,6 @@ r_bruta <- read_excel("RemuneracionBruta_OEDE.xlsx")
 r_bruta = ts(r_bruta[-(1),3], start = c(1995, 1) , frequency = 12)
 
 
-dolar_cot <- read.csv("dolar-cot.csv")
-dolar_cot = ts(dolar_cot[2], start = c(1995, 1) , frequency = 12)
 
 emae <- read_xls("emae.xls")
 emae = ts(emae[-1,3], start = c(2004, 1) , frequency = 12)
@@ -74,16 +91,33 @@ emae = ts(emae[-1,3], start = c(2004, 1) , frequency = 12)
 p_int <- read_excel("precios_int.xls")
 p_int <- ts(p_int[2], start = c(1997, 1) , frequency = 12)
 
+tasa <- read.csv("tasa.csv")
+tasa <- ts(tasa,start=c(2004,1),frequency=12)
+
+
+
 
 ipc <- window(ipc,start = c(2002,1))
 
 p_int <- window(p_int,start = c(2002,1))
 
-tdc_nom <-window(tdc_nom, start= c(2002,1))
+p_int_2 <- p_int_se$seties
 
+
+tdc_nom <-window(tdc_nom, start= c(2002,3))
+
+ggseasonplot(ipc)
+
+ggseasonplot(p_int)
+
+ggseasonplot(tdc_nom)
+
+p_int_2 <- seas(p_int)
+
+par(mfrow = c(3,1))
 ts.plot(ipc, type="l", lwd=2, xlab="",ylab="%",bty="n", main = "Índice de precios al consumidor") 
-ts.plot(p_int, type="l", lwd=2, xlab="",ylab="%",bty="n", main = "Nivel de precios Internacionales") 
-ts.plot(tdc_nom, type="l", lwd=2, xlab="",ylab="%",bty="n", main = "Tasa de cambio nominal") 
+ts.plot(p_int, type="l", lwd=2, xlab="",ylab="Precios del 2004",bty="n", main = "Nivel de precios Internacionales") 
+ts.plot(tdc_nom, type="l", lwd=2, xlab="",ylab="Pesos por dolar",bty="n", main = "Tasa de cambio nominal") 
 
 
 l_ipc <-log(ipc)
@@ -93,29 +127,31 @@ l_p_int <-log(p_int)
 l_tdc_n <-log(tdc_nom)
 
 
+par(mfrow = c(3,1))
 
-ts.plot(l_ipc, type="l", lwd=2, xlab="",ylab="%",bty="n", main = " Logaritmo Índice de precios al consumidor") 
-ts.plot(l_p_int, type="l", lwd=2, xlab="",ylab="%",bty="n", main = "Logaritmo de los precios  Internacionales") 
-ts.plot(l_tdc_n, type="l", lwd=2, xlab="",ylab="%",bty="n", main = "Logaritmo de la tasa de cambio nominal") 
+ts.plot(l_ipc, type="l", lwd=2, xlab="",ylab="",bty="n", main = " Logaritmo Índice de precios al consumidor") 
+ts.plot(l_p_int, type="l", lwd=2, xlab="",ylab="",bty="n", main = "Logaritmo de los precios  Internacionales") 
+ts.plot(l_tdc_n, type="l", lwd=2, xlab="",ylab="",bty="n", main = "Logaritmo de la tasa de cambio nominal") 
 
 d_l_ipc  <- diff(l_ipc)
 d_l_p_int <- diff(l_p_int)
 d_l_tdc_n <- diff(l_tdc_n)
 
+par(mfrow = c(3,1))
 
-ts.plot(d_l_ipc, type="l", lwd=2, xlab="",ylab="%",bty="n", main = " Diff Logaritmo Índice de precios al consumidor") 
-ts.plot(d_l_p_int, type="l", lwd=2, xlab="",ylab="%",bty="n", main = "Diff Logaritmo de los precios  Internacionales") 
-ts.plot(d_l_tdc_n, type="l", lwd=2, xlab="",ylab="%",bty="n", main = " Diff Logaritmo de la tasa de cambio nominal") 
+ts.plot(d_l_ipc, type="l", lwd=2, xlab="",ylab="",bty="n", main = " Diff Logaritmo Índice de precios al consumidor") 
+ts.plot(d_l_p_int, type="l", lwd=2, xlab="",ylab="",bty="n", main = "Diff Logaritmo de los precios  Internacionales") 
+ts.plot(d_l_tdc_n, type="l", lwd=2, xlab="",ylab="",bty="n", main = " Diff Logaritmo de la tasa de cambio nominal") 
 
 #### Parte 1 ####
 # Generamos el modelo completo en el cual tomamos en consideración
 ### Subsetteeo con tal que omito el problema de los NAN, hasta lo máximo
 ### que se puede recortat
-d_l_ipc <-window(d_l_ipc,start=c(2004,1),end=c(2019,12))
+d_l_ipc <-window(d_l_ipc,start=c(2004,4),end=c(2019,12))
 
-d_l_tdc_n <-window(d_l_tdc_n,start=c(2004,1),end=c(2019,12))
+d_l_tdc_n <-window(d_l_tdc_n,start=c(2004,4),end=c(2019,12))
 
-d_l_p_int <-window(d_l_p_int,start=c(2004,1),end=c(2019,12))
+d_l_p_int <-window(d_l_p_int,start=c(2004,4),end=c(2019,12))
 
 matC <- function(m, p, vx) {
   vy <- setdiff(1:m, vx)
@@ -136,7 +172,7 @@ matC <- function(m, p, vx) {
 modelo_1 <- cbind(d_l_p_int, 
                   d_l_tdc_n,
                   d_l_ipc)
-
+modelo_1 <- window(modelo_1,start=c(2004,10),end=c(2019,12))
 var_1 <- VARselect(modelo_1, lag.max = 15, type = "const")
 var_1
 p<- var_1$selection[1]
@@ -170,10 +206,11 @@ plot(e, main = "Residuals")
 #### con la función restrict restrinjo el VAR que hize líneas atras
 
 
+
 constraints <- matC(m, p, 2)
 VAR1 <- restrict(VAR1, method = "man", resmat = constraints)
 VAR1
-
+  
 
 #### Vemos que las raíces unitarias dan menor que uno por lo tanto 
 #### prosigo
@@ -185,6 +222,7 @@ roots(VAR1, modulus = TRUE)
 #### Genero las matrices para elaborar el VAR estructural
 
 # A Matrix
+
 Amat <- diag(m)
 for (i in 2:m) {
   for (j in 1:(i - 1)) {
@@ -211,23 +249,13 @@ source("PS2_SVAR_Plots.R")
 source("PS2_Bootstrap.R")
 source("PS2_Miscellaneous.R")
 
-H.ERPT <- 12 # Horizon (ERPT)
-Y.boot <- boot.replicate(VAR1, R, type)
+H.ERPT <- 24 # Horizon (ERPT)
+Y.boot1 <- boot.replicate(VAR1, R, type)
 
-ERPT_1 <- SVAR.erpt.boot(SVAR_1,Amat, Bmat, H.ERPT, 3, 2, gamma, Y.boot)
+ERPT_1 <- SVAR.erpt.boot(SVAR_1,Amat, Bmat, 12, 3, 2, gamma, Y.boot1)
 
-
-#### Aquí se grafica el primer elemento
-plot(0:H.ERPT, ERPT_1$pe,
-     main = "Tasa de cambio nominal pass-through a indice de precios al consumidor",
-     xlab = "Horizon", ylab = "%",
-     ylim = c(min(ERPT_1$lb), max(ERPT_1$ub)),
-     type = "o", lwd = 2)
-grid(NULL, NULL, lty = 1)
-xx <- c(0:H.ERPT, H.ERPT:0)
-yy <- c(c(ERPT_1$lb), rev(c(ERPT_1$ub)))
-polygon(xx, yy, col = adjustcolor("grey", alpha.f = 0.5), border = NA)
-ERPT3 <- SVAR.erpt(SVAR, H.ERPT, 1, 2)
+plot_traspaso(ERPT_1,"Tasa de cambio nominal pass-through a indice de precios al consumidor")
+#### Aquí se grafica el primer eleme-nto
 #plot.erpt3(ERPT3, H.ERPT)
 
 
@@ -241,10 +269,9 @@ ERPT3 <- SVAR.erpt(SVAR, H.ERPT, 1, 2)
 ### Este modelo se va a llamar modelo 2 y su VAR ####
 ### correspondiente se va a designar VAR2####
 
-modelo_2 <- cbind(d_l_tdc_n,
-                  d_l_ipc)
-
-var_2 <- VARselect(modelo_2, lag.max = 15, type = "const")
+modelo_2 <- cbind(d_l_tdc_n,d_l_ipc)
+modelo_2ex <- window(modelo_2, start = c(2004,12),end=c(2019,12))
+var_2 <- VARselect(modelo_2ex, lag.max = 15, type = "const")
 var_2
 
 
@@ -258,7 +285,7 @@ p2
 
 ### Generamos el modelo y obtenemos las estadísticas sumarias
 
-VAR2 <- VAR(modelo_2, p = p2, type = "const")
+VAR2 <- VAR(modelo_2ex, p = p2, type = "const")
 summary(VAR2)
 
 m <- VAR2$K # Number of variables in the VAR
@@ -315,20 +342,10 @@ gamma <- 0.95 # Confidence level
 SVAR2 <- SVAR(VAR2, Amat = Amat, Bmat = Bmat, lrtest= FALSE)
 Y.boot <- boot.replicate(VAR2, R, type)
 
-ERPT_2 <- SVAR.erpt.boot(SVAR2,Amat, Bmat, H.ERPT, 2, 1, gamma, Y.boot)
+ERPT_2 <- SVAR.erpt.boot(SVAR2,Amat, Bmat, 12, 2, 1, gamma, Y.boot)
 
-
-
-plot(0:H.ERPT, ERPT_2$pe,
-     main = "Tasa de cambio nominal pass-through a indice de precios al consumidor",
-     xlab = "Horizon", ylab = "%",
-     ylim = c(min(ERPT_2$lb), max(ERPT_2$ub)),
-     type = "o", lwd = 2)
-grid(NULL, NULL, lty = 1)
-xx <- c(0:H.ERPT, H.ERPT:0)
-yy <- c(c(ERPT_2$lb), rev(c(ERPT_2$ub)))
-polygon(xx, yy, col = adjustcolor("grey", alpha.f = 0.5), border = NA)
-
+plot_traspaso(ERPT_2
+              ,"Tasa de cambio nominal pass-through a indice de precios al consumidor")
 
 
 
@@ -341,7 +358,7 @@ polygon(xx, yy, col = adjustcolor("grey", alpha.f = 0.5), border = NA)
 
 # 3 Variables #
 modelo_1
-p <- 2 # lag length
+p <- 3 # lag length
 H <- 12 # Horizon
 gamma <- 0.95 # Confidence level
 
@@ -349,13 +366,13 @@ gamma <- 0.95 # Confidence level
   idx.r <- 3 # Response: Y
   
   # Cumulative IRF
-  LP.c <- lp(modelo_1, p, idx.s, idx.r, H, gamma, cumulative = TRUE)
-  plot.lp(LP.c)
+  LP.c <- lp.multiplier(modelo_1, p, idx.s, idx.r,idx.s, 12, gamma)
+  plot_traspaso(LP.c,"Traspaso del T.C sobre el IPC con 3 variables")
 
 ########################
 # 2 Variables #
 
-p <- 3 # lag length
+p <- 1 # lag length
 H <- 12 # Horizon
 gamma <- 0.95 # Confidence level
 
@@ -363,21 +380,21 @@ idx.s <- 1 # Shock: G
 idx.r <- 2 # Response: Y
 
 # Cumulative IRF
-LP.c <- lp(modelo_2, p, idx.s, idx.r, H, gamma, cumulative = TRUE)
-plot.lp(LP.c)
+LP.c2 <- lp.multiplier(modelo_2, p, idx.s, idx.r,idx.s, 12, gamma)
+plot_traspaso(LP.c2,"Traspaso del T.C sobre el IPC con 2 variables ")
 
 
-#### Ejercicio 3 ####
+#### Ejercicio 3  y 4####
 
-r_bruta <- window(r_bruta,start =c(2004,1),end =c(2019,12))
-emae <- window(emae,start = c(2004,1),end =c(2019,12))
-m2 <- window(m2,start=c(2004,1,end=c(2019,12)))
+r_bruta <- window(r_bruta,start =c(2004,9),end =c(2019,12))
+emae <- window(emae,start = c(2004,9),end =c(2019,12))
+m2 <- window(m2,start=c(2004,9),end=c(2019,12))
 
-
+par(mfrow = c(4,1))
 ts.plot(r_bruta, type="l", lwd=2, xlab="",ylab="%",bty="n", main = "Salarios") 
 ts.plot(emae, type="l", lwd=2, xlab="",ylab="%",bty="n", main = "Indice de la actividad economica") 
 ts.plot(m2, type="l", lwd=2, xlab="",ylab="%",bty="n", main = "Cantidad de dinero") 
-
+ts.plot(tasa,type="l", lwd=2, xlab="",ylab="%",bty="n", main = "Tasa de inteŕes")
 
 l_r_bruta <- log(r_bruta)
 l_emae <- log(emae)
@@ -393,7 +410,348 @@ d_l_r_bruta <- diff(l_r_bruta)
 d_l_emae <- diff(l_emae)
 d_l_m2 <- diff(l_m2)
 
+d_tasa <- diff(tasa)
+par(mfrow=c(4,1))
+ts.plot(d_l_r_bruta, type="l", lwd=2, xlab="",bty="n", main = "V. de log. de Salarios") 
+ts.plot(d_l_emae, type="l", lwd=2, xlab="",bty="n", main = "V. de log. del EMAE") 
+ts.plot(d_l_m2, type="l", lwd=2, xlab="",bty="n", main = "V. del logaritmo de la cantidad de dinero") 
+ts.plot(d_tasa, type="l", lwd=2, xlab="",bty="n", main = "V. de la tasa de interés") 
 
-ts.plot(d_l_r_bruta, type="l", lwd=2, xlab="",ylab="%",bty="n", main = "Salarios") 
-ts.plot(d_l_emae, type="l", lwd=2, xlab="",ylab="%",bty="n", main = "Indice de la actividad economica") 
-ts.plot(d_l_m2, type="l", lwd=2, xlab="",ylab="%",bty="n", main = "Cantidad de dinero") 
+#### Ahora limpio la variable EMAE ####
+d_l_emae <-window(d_l_emae, start=c(2004,9))
+dum2 <- data.frame(time=time(d_l_emae), 
+                   Value=as.matrix(d_l_emae))
+dum2 <- as.character.Date(dum2)
+
+### Caida marzo
+dum2$d1 <- ifelse(dum2$time=="2009.250",1,0)
+dum2$d2 <- ifelse(dum2$time=="2012.250",1,0)
+dum2$d3 <- ifelse(dum2$time=="2018.250",1,0)
+
+### Caída abril
+
+dum2$d4 <- ifelse(dum2$time=="2009.333",1,0)
+dum2$d5 <- ifelse(dum2$time=="2012.333",1,0)
+dum2$d6 <- ifelse(dum2$time=="2018.333",1,0)
+
+### Caída mayo
+dum2$d7 <- ifelse(dum2$time=="2009.417",1,0)
+dum2$d8 <- ifelse(dum2$time=="2012.417",1,0)
+dum2$d9 <- ifelse(dum2$time=="2018.417",1,0)
+
+### Caída junio
+dum2$d10 <- ifelse(dum2$time=="2009.500",1,0)
+dum2$d11 <- ifelse(dum2$time=="2012.500",1,0)
+dum2$d12 <- ifelse(dum2$time=="2018.500",1,0)
+
+
+### Recuperacion Julio
+dum2$d13 <- ifelse(dum2$time=="2009.583",1,0)
+dum2$d14 <- ifelse(dum2$time=="2012.583",1,0)
+dum2$d15 <- ifelse(dum2$time=="2018.583",1,0)
+
+### Recuperacion Agosto
+dum2$d16 <- ifelse(dum2$time=="2009.667",1,0)
+dum2$d17 <- ifelse(dum2$time=="2012.667",1,0)
+dum2$d18 <- ifelse(dum2$time=="2018.667",1,0)
+
+
+###### Luego de la dummy se limpia la regresión###
+
+#### Para esto tomos los residuales ####
+
+reg2 <- lm(dum2$serie.desestacionalizada~dum2$d1+dum2$d2+dum2$d3+dum2$d4
+           + dum2$d5 + dum2$d6 + dum2$d7 + dum2$d8 + dum2$d9
+           + dum2$d10 + dum2$d11 + dum2$d12 + dum2$d13 
+           + dum2$d14 + dum2$d15 + dum2$d16 + dum2$d17 + dum2$d18)
+cleaned_d_emae <- reg2$residuals
+cleaned_d_emae <- ts(cleaned_d_emae, start=c(2004,9), frequency = 12)
+
+
+
+par(mfrow=c(2,1))
+ts.plot(d_l_emae,main="EMAE afectado por shocks")
+ts.plot(reg2$residuals,main = "EMAE no afectado por shocks")
+
+##### Ejercicio 5 #######
+
+
+modelo_3 <- cbind(d_l_tdc_n,d_tasa,d_l_r_bruta,cleaned_d_emae,d_l_m2,d_l_ipc)
+modelo_3a <-window(modelo_3,start=c(2004,12),end=c(2019,11))
+
+
+
+var_3 <- VARselect(modelo_3a, lag.max = 3, type = "const")
+var_3
+
+
+p2<- var_3$selection[1]
+p2
+
+### El valor de p2, nos dice que los rezagos adecuados son 3
+### con esto se va a proceder
+
+
+
+### Generamos el modelo y obtenemos las estadísticas sumarias
+
+VAR3 <- VAR(modelo_3, p = p2, type = "const")
+summary(VAR3)
+
+# 3 Variables #
+p <- 1 # lag length
+H <- 12 # Horizon
+gamma <- 0.95 # Confidence level
+
+idx.s <- 1 # Shock: G
+idx.r <- 6 # Response: Y
+
+H =12
+
+#### Controlando por las variables
+### Aqui se controlo por todas las demás variables adicionales
+LP.c.acc1 <- lp.multiplier(modelo_3a, p, idx.s, idx.r,idx.s, H, gamma)
+
+
+
+plot_traspaso(LP.c.acc1,"Traspaso del shock de un TCN al IPC")
+
+
+#### Ejercicio 5
+
+###
+p<-1
+idx.rl <- 6
+D <-ifelse(modelo_3a[,"d_l_tdc_n"] < 0, 1, 0)
+# Cumulative IRF
+LP.c1 <- lp.multiplier.pw(modelo_3a, D, p, idx.s, idx.rl, idx.s, H, gamma)
+plot.lp.pw(LP.c1 ,c("Apreciacion", "Depreciacion"))
+
+modelo_3b <- cbind(d_l_tdc_n,d_tasa,d_l_r_bruta,cleaned_d_emae,d_l_m2,d_l_ipc)
+modelo_3b <-window(modelo_3,start=c(2004,10),end=c(2019,12))
+
+D2 <-ifelse(modelo_3a[,"d_l_tdc_n"] < 0, 1, 0)
+
+D_gran2 <- ifelse(abs(modelo_3a[,"d_l_tdc_n"]) > sd(modelo_3a[,"d_l_tdc_n"]), 1, 0)
+D_ex6b <- D_gran2*(1-D2) 
+
+
+## Una vez elaborada la variable binaria 
+#### corro una nueva regresión para poder
+#### ver los efectos (o en este caso semi
+#### -limpiarlos).
+
+#### La variable  que almacena el valor de este shock se llama LP.c2
+#### los valores del shock y ver sobre que variable 
+#### impacta se mantienen
+
+
+
+idx.r <- 6
+idx.s <- 1
+p <- 1
+H <- 12
+LP.6c2b <- lp.multiplier.pw(modelo_3a,D_ex6b, p, idx.s, idx.r,idx.s, H, gamma)
+plot.lp.pw(LP.6c2b, c("Mayor depreciacion", "Otros escenarios"))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### Ejercicio 5 
+#### Cambio debio
+
+modelo_5 <- window(modelo_2,start=c(2004,12))
+
+########################
+# 2 Variables #
+
+p <- 1 # lag length
+H <- 12 # Horizon
+gamma <- 0.95 # Confidence level
+
+idx.s <- 1 # Shock: G
+idx.r2 <- 2 # Response: Y
+D <-ifelse(modelo_5[,"d_l_tdc_n"] < 0, 1, 0)
+
+# Cumulative IRF
+
+LP.c1 <- lp.multiplier.pw(modelo_5, D, p, idx.s, idx.r2, idx.s, H, gamma)
+plot.lp.pw(LP.c1 ,c("Apreciacion", "Depreciacion"))
+
+
+#### Ejercicio 6
+D <-ifelse(modelo_5[,"d_l_tdc_n"] < 0, 1, 0)
+
+D_gran <- ifelse(abs(modelo_5[,"d_l_tdc_n"]) > sd(modelo_5[,"d_l_tdc_n"]), 1, 0)
+D_ex6 <- D_gran*(1-D) 
+
+
+## Una vez elaborada la variable binaria 
+#### corro una nueva regresión para poder
+#### ver los efectos (o en este caso semi
+#### -limpiarlos).
+
+#### La variable  que almacena el valor de este shock se llama LP.c2
+#### los valores del shock y ver sobre que variable 
+#### impacta se mantienen
+
+idx.r <- 2
+LP.6c2 <- lp.multiplier.pw(modelo_5,D_ex6, p, idx.s, idx.r,idx.s, H, gamma)
+plot.lp.pw(LP.6c2, c("Mayor depreciacion", "Otros escenarios"))
+
+
+
+
+#### Ejercicio 7 ######
+
+
+#### Utilizo dolar ccl y genero un nuevo modelo
+dolar_ccl <- read.csv("dolar_cot_fran.csv")
+dolar_ccl_e7 <- ts(dolar_ccl[3],start=c(2010,2),
+                   end=c(2019,12),frequency=12)
+l_dolar_ccl <- log(dolar_ccl_e7)
+d_l_d_ccl <- diff(l_dolar_ccl)
+
+
+modelo_7a <- window(modelo_2,start=c(2010,3),
+                   end=c(2019,12))
+
+
+modelo_7a[,1] <-d_l_d_ccl
+
+var_7a <- VARselect(modelo_7a, lag.max = 15, type = "const")
+var_7a
+
+p7<- var_7a$selection[1]
+p7
+
+VAR7a <- VAR(modelo_7a, p = p7, type = "const")
+summary(VAR7a)
+
+
+# 3 Variables #
+p <- 3 # lag length
+H <- 12 # Horizon
+gamma <- 0.95 # Confidence level
+
+idx.s <- 1 # Shock: G
+idx.r <- 2 # Response: Y
+
+
+#### Controlando por las variables
+### Aqui se controlo por todas las demás variables adicionales
+LP.c.e7 <- lp.multiplier(modelo_7a, p, idx.s, idx.r,idx.s, 12, gamma)
+
+plot_traspaso(LP.c.e7,
+              "Traspaso del tipo de cambio implícito
+              al índice de precios al consumidor")
+
+
+##### Ejercicio 7 Parte B
+dum3 <- data.frame(time=time(modelo_2))
+dum3 <- as.character.Date(dum3)
+
+dum3$d1 <- ifelse(((dum3$time>="2011.667")),1,0)
+dum3$d2 <- ifelse(((dum3$time<="2015.750")),1,0)
+
+dum3$d3 <- dum3$d1 * dum3$d2
+
+D_7b1 <- dum3$d3
+
+
+idx.s <- 1 # Shock: Shock en el tipo de cambio
+idx.r <- 2 # Response: Respuesta en el IPC
+
+LP.c.e7 <- lp.multiplier.pw(modelo_2,D_7b1, p, idx.s, idx.r,idx.s, H, gamma)
+plot.lp.pw(LP.c.e7, c("CON CEPO TCN", "SIN CEPO TCN"))
+
+dum7b2 <- data.frame(time=time(modelo_7a))
+dum7b2 <- as.character.Date(dum7b2)
+
+dum7b2$d1 <- ifelse(((dum7b2$time>="2011.667")),1,0)
+dum7b2$d2 <- ifelse(((dum7b2$time<="2015.750")),1,0)
+
+dum7b2$d3 <- dum7b2$d1 * dum7b2$d2
+
+D_7b2 <- dum7b2$d3
+
+
+LP.c7b2 <- lp.multiplier.pw(modelo_7a,D_7b2, p, idx.s, idx.r,idx.s, H, gamma)
+plot.lp.pw(LP.c7b2, c("CON CEPO TCI", "SIN CEPO TCI"))
+
+
+##### Parte C
+#### Orden 1 #####
+## TCN - CCL - IPC ##
+modelo_7ca1 = cbind(d_l_tdc_n,d_l_d_ccl,d_l_ipc)
+modelo_7ca1<- window(modelo_7ca1, start=c(2010,3), end=c(2019,12))
+
+p <- 3 # lag length
+H <- 12 # Horizon
+gamma <- 0.95 # Confidence level
+
+idx.s <- 1 # Shock: G
+idx.r <- 3 # Response: Y
+
+idx.rl <- idx.r # Cum. LHS: Y.tilde
+idx.rr <- idx.s # Cum. RHS: G.tilde
+idx.s <- 1
+# Multiplier (nonlinear)
+LP.7c1 <- lp.multiplier.pw(modelo_7ca1, D_7b2, p, idx.s, idx.rl, 1, H, gamma)
+plot.lp.pw(LP.7c1, c("Con Cepo Cambiario - TCN","Sin cepo cambiario - TCN "))
+
+## CCL - TCN  - IPC ##
+modelo_7ca2 = cbind(d_l_d_ccl,d_l_tdc_n,d_l_ipc)
+modelo_7ca2<- window(modelo_7ca2, start=c(2010,3), end=c(2019,12))
+
+p <- 3 # lag length
+H <- 12 # Horizon
+gamma <- 0.95 # Confidence level
+
+idx.s <- 1 # Shock: G
+idx.r <- 3 # Response: Y
+
+
+idx.rl <- idx.r # Cum. LHS: Y.tilde
+idx.rr <- idx.s # Cum. RHS: G.tilde
+
+# Multiplier (nonlinear)
+LP.7c2 <- lp.multiplier.pw(modelo_7ca2, D_7b2, p, idx.s, idx.rl, 1, H, gamma)
+plot.lp.pw(LP.7c2, c("Con Cepo Cambiario - TCI","Sin cepo cambiario - TCI "))
+
+
+
+#### 7 d ######
+
+modelo_7d <- window(modelo_2, start = c(2005,1),end=c(2019,12))
+dum7d <- data.frame(time=time(modelo_7d))
+dum7d <- as.character.Date(dum7d)
+
+dum7d$d1 <- ifelse(((dum7d$time>="2005.0") & (dum7d$time<="2006.0")),1,0)
+
+dum7d$d2 <- ifelse(((dum7d$time>="2009.0") & (dum7d$time<="2017.0")),1,0)
+
+dum7d$d3 <- ifelse((dum7d$time>="2019.0"),1,0)
+
+
+D_7d <- dum7d$d1 + dum7d$d2 + dum7d$d3
+
+idx.s <- 1
+idx.rl <- 2
+idx.rr <- 1
+LP.7d <- lp.multiplier.pw(modelo_7d, D_7d, p, idx.s, idx.rl, idx.rr, H, gamma)
+plot.lp.pw(LP.7d, c("Con control de liquidacion en inversión directa ","Sin control de liquidación"))
+
+
