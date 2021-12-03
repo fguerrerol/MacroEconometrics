@@ -43,16 +43,20 @@ library("stargazer")
 ### Indice de precios externos 
 
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+getwd()
+
+source("Tools/PS3_LP_Tools.R")
+source("Tools/PS2_SVAR_Tools.R")
+source("Tools/PS2_SVAR_Plots.R")
+source("Tools/PS3_SVAR_Tools.R")
+source("Tools/PS3_SIRF_Transform.R")
+source("Tools/PS3_SVAR_LR.R")
+source("Tools/PS3_LP_Tools.R")
 
 
-source("PS3_LP_Tools.R")
-source("PS2_SVAR_Tools.R")
-source("PS2_SVAR_Plots.R")
-source("PS3_SVAR_Tools.R")
-source("PS3_SIRF_Transform.R")
-source("PS3_SVAR_LR.R")
-source("PS3_LP_Tools.R")
 
+#### Se construye la funcion plot_traspaso para plotear el traspaso con bandas
+#### de confianza
 plot_traspaso <-function(I,title){
   H <- length(I$pe) - 1
   par(mfrow = c(1, 1))
@@ -68,33 +72,27 @@ plot_traspaso <-function(I,title){
 
 
 
-m2 <- read_excel("M2.xls",sheet=2)
+
+m2 <- read_excel("Series/M2.xls",sheet=2)
 m2 = ts(m2[-(1),2], start = c(1986, 1) , frequency = 12)
 
-
-
-tdc_nom <- read_excel("tdc_nominal.xls")
+tdc_nom <- read_excel("Series/tdc_nominal.xls")
 tdc_nom = ts(tdc_nom[-(1),2], start = c(2002, 3) , frequency = 12)
 
-
-ipc <- read.csv("ipc_1943_act.csv")
+ipc <- read.csv("Series/ipc_1943_act.csv")
 ipc = ts(ipc[3],start = c(1943,1),frequency = 12)
 
-r_bruta <- read_excel("RemuneracionBruta_OEDE.xlsx")
+r_bruta <- read_excel("Series/RemuneracionBruta_OEDE.xlsx")
 r_bruta = ts(r_bruta[-(1),3], start = c(1995, 1) , frequency = 12)
 
-
-
-emae <- read_xls("emae.xls")
+emae <- read_xls("Series/emae.xls")
 emae = ts(emae[-1,3], start = c(2004, 1) , frequency = 12)
 
-p_int <- read_excel("precios_int.xls")
+p_int <- read_excel("Series/precios_int.xls")
 p_int <- ts(p_int[2], start = c(1997, 1) , frequency = 12)
 
-tasa <- read.csv("tasa.csv")
+tasa <- read.csv("Series/tasa.csv")
 tasa <- ts(tasa,start=c(2004,1),frequency=12)
-
-
 
 
 ipc <- window(ipc,start = c(2002,1))
@@ -114,11 +112,15 @@ ggseasonplot(tdc_nom)
 
 p_int_2 <- seas(p_int)
 
+
+#### Se plotean las primeras series
 par(mfrow = c(3,1))
 ts.plot(ipc, type="l", lwd=2, xlab="",ylab="%",bty="n", main = "Índice de precios al consumidor") 
 ts.plot(p_int, type="l", lwd=2, xlab="",ylab="Precios del 2004",bty="n", main = "Nivel de precios Internacionales") 
 ts.plot(tdc_nom, type="l", lwd=2, xlab="",ylab="Pesos por dolar",bty="n", main = "Tasa de cambio nominal") 
 
+
+#### Se obtienene los logaritmos para disminuir la varianza
 
 l_ipc <-log(ipc)
 
@@ -129,10 +131,13 @@ l_tdc_n <-log(tdc_nom)
 
 par(mfrow = c(3,1))
 
+
 ts.plot(l_ipc, type="l", lwd=2, xlab="",ylab="",bty="n", main = " Logaritmo Índice de precios al consumidor") 
 ts.plot(l_p_int, type="l", lwd=2, xlab="",ylab="",bty="n", main = "Logaritmo de los precios  Internacionales") 
 ts.plot(l_tdc_n, type="l", lwd=2, xlab="",ylab="",bty="n", main = "Logaritmo de la tasa de cambio nominal") 
 
+
+#### Se aplcian las diferencias yse vuelve a plotear
 d_l_ipc  <- diff(l_ipc)
 d_l_p_int <- diff(l_p_int)
 d_l_tdc_n <- diff(l_tdc_n)
@@ -244,10 +249,7 @@ gamma <- 0.95 # Confidence level
 ### Creo y asigno el VAR estructural
 SVAR_1 <- SVAR(VAR1, Amat = Amat, Bmat = Bmat, lrtest= FALSE)
 SVAR_1
-source("PS2_SVAR_Tools.R")
-source("PS2_SVAR_Plots.R")
-source("PS2_Bootstrap.R")
-source("PS2_Miscellaneous.R")
+
 
 H.ERPT <- 24 # Horizon (ERPT)
 Y.boot1 <- boot.replicate(VAR1, R, type)
