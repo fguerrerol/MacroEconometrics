@@ -1,0 +1,211 @@
+Starting preprocessing of the model file ...
+Found 12 equation(s).
+Evaluating expressions...done
+Computing static model derivatives (order 1).
+Computing dynamic model derivatives (order 2).
+Processing outputs ...
+done
+Preprocessing completed.
+
+STEADY-STATE RESULTS:
+
+gY_obs  		 1
+gYBar   		 1
+G       		 1
+y       		 0
+ppi     		 0
+ppi_obs 		 0.75
+tcr     		 0
+tcr_obs 		 0
+U_obs   		 8
+u       		 0
+UBar    		 8
+gUBar   		 0
+
+EIGENVALUES:
+         Modulus             Real        Imaginary
+
+               0               -0                0
+               0               -0                0
+           0.027            0.027                0
+            0.13             0.13                0
+           0.645            0.645                0
+            0.76             0.76                0
+             0.8              0.8                0
+               1                1                0
+
+
+There are 1 eigenvalue(s) larger than 1 in modulus 
+for 1 forward-looking variable(s)
+
+The rank condition is verified.
+
+
+You did not declare endogenous variables after the estimation/calib_smoother command.
+Smoothed variables will be computed for the 12 endogenous variables
+of your model, this can take a long time ....
+
+
+Choose one of the following options:
+
+ [1] Consider all the endogenous variables.
+ [2] Consider all the observed endogenous variables.
+ [3] Stop Dynare and change the mod file.
+
+options [default is 1] =  1
+
+
+Initial value of the log posterior (or likelihood): -328.5087
+
+RESULTS FROM POSTERIOR ESTIMATION
+parameters
+            prior mean     mode    s.d. prior pstdev
+
+THETA           0.150   0.1776  0.0874 beta 0.1000 
+Gss             5.000   4.0405  0.9116 unif 2.8868 
+PHI             0.600   0.6850  0.0714 beta 0.1000 
+SIG_eps_YBar    0.300   0.4730  0.1206 norm 0.3000 
+SIG_eps_G       0.300   0.3540  0.1055 norm 0.3000 
+SIG_eps_y       0.300   0.3913  0.0953 norm 0.3000 
+LAMBDA          0.250   0.2368  0.0958 beta 0.1000 
+KAPPA           0.150   0.1331  0.0631 norm 0.1000 
+GAMMA           0.075   0.0057  0.0032 norm 0.0700 
+SIG_eps_ppi     0.300   0.2325  0.0300 norm 0.3000 
+TAU_5           0.500   0.7382  0.0762 unif 0.2887 
+SIG_eps_tcr     3.000   3.2261  0.2547 norm 1.0000 
+TAU_1           0.200   0.3857  0.1303 norm 0.2000 
+TAU_2           0.500   0.5549  0.1872 beta 0.2500 
+TAU_3           0.500   0.0931  0.0707 beta 0.2500 
+TAU_4           0.500   0.4697  0.2530 beta 0.2500 
+Uss             7.500   7.9427  0.6119 unif 4.3301 
+SIG_eps_u       0.100   0.0788  0.1426 norm 0.2000 
+SIG_eps_UBar    0.100   0.0766  0.1484 norm 0.2000 
+SIG_eps_gUBar   0.100   0.2559  0.0748 norm 0.2000 
+
+
+Log data density [Laplace approximation] is -359.393072.
+
+
+[Warning: Cannot set Position while WindowStyle is 'docked'] 
+[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('graph_decomp', '/usr/lib/dynare/matlab/graph_decomp.m', 147)" style="font-weight:bold">graph_decomp</a> (<a href="matlab: opentoline('/usr/lib/dynare/matlab/graph_decomp.m',147,0)">line 147</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('plot_shock_decomposition', '/home/jesus/Documentos/MEcon/Trim3/MacroEconometrics/FGL/TP3/Dynare/plot_shock_decomposition.m', 558)" style="font-weight:bold">plot_shock_decomposition</a> (<a href="matlab: opentoline('/home/jesus/Documentos/MEcon/Trim3/MacroEconometrics/FGL/TP3/Dynare/plot_shock_decomposition.m',558,0)">line 558</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('MVF_gap.driver', '/home/jesus/Documentos/MEcon/Trim3/MacroEconometrics/FGL/TP3/Dynare/+MVF_gap/driver.m', 386)" style="font-weight:bold">MVF_gap.driver</a> (<a href="matlab: opentoline('/home/jesus/Documentos/MEcon/Trim3/MacroEconometrics/FGL/TP3/Dynare/+MVF_gap/driver.m',386,0)">line 386</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('dynare', '/usr/lib/dynare/matlab/dynare.m', 301)" style="font-weight:bold">dynare</a> (<a href="matlab: opentoline('/usr/lib/dynare/matlab/dynare.m',301,0)">line 301</a>)] 
+[Warning: Cannot set Position while WindowStyle is 'docked'] 
+[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('graph_decomp', '/usr/lib/dynare/matlab/graph_decomp.m', 147)" style="font-weight:bold">graph_decomp</a> (<a href="matlab: opentoline('/usr/lib/dynare/matlab/graph_decomp.m',147,0)">line 147</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('plot_shock_decomposition', '/home/jesus/Documentos/MEcon/Trim3/MacroEconometrics/FGL/TP3/Dynare/plot_shock_decomposition.m', 558)" style="font-weight:bold">plot_shock_decomposition</a> (<a href="matlab: opentoline('/home/jesus/Documentos/MEcon/Trim3/MacroEconometrics/FGL/TP3/Dynare/plot_shock_decomposition.m',558,0)">line 558</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('MVF_gap.driver', '/home/jesus/Documentos/MEcon/Trim3/MacroEconometrics/FGL/TP3/Dynare/+MVF_gap/driver.m', 386)" style="font-weight:bold">MVF_gap.driver</a> (<a href="matlab: opentoline('/home/jesus/Documentos/MEcon/Trim3/MacroEconometrics/FGL/TP3/Dynare/+MVF_gap/driver.m',386,0)">line 386</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('dynare', '/usr/lib/dynare/matlab/dynare.m', 301)" style="font-weight:bold">dynare</a> (<a href="matlab: opentoline('/usr/lib/dynare/matlab/dynare.m',301,0)">line 301</a>)] 
+[Warning: Cannot set Position while WindowStyle is 'docked'] 
+[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('graph_decomp', '/usr/lib/dynare/matlab/graph_decomp.m', 147)" style="font-weight:bold">graph_decomp</a> (<a href="matlab: opentoline('/usr/lib/dynare/matlab/graph_decomp.m',147,0)">line 147</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('plot_shock_decomposition', '/home/jesus/Documentos/MEcon/Trim3/MacroEconometrics/FGL/TP3/Dynare/plot_shock_decomposition.m', 558)" style="font-weight:bold">plot_shock_decomposition</a> (<a href="matlab: opentoline('/home/jesus/Documentos/MEcon/Trim3/MacroEconometrics/FGL/TP3/Dynare/plot_shock_decomposition.m',558,0)">line 558</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('MVF_gap.driver', '/home/jesus/Documentos/MEcon/Trim3/MacroEconometrics/FGL/TP3/Dynare/+MVF_gap/driver.m', 386)" style="font-weight:bold">MVF_gap.driver</a> (<a href="matlab: opentoline('/home/jesus/Documentos/MEcon/Trim3/MacroEconometrics/FGL/TP3/Dynare/+MVF_gap/driver.m',386,0)">line 386</a>)
+  In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('dynare', '/usr/lib/dynare/matlab/dynare.m', 301)" style="font-weight:bold">dynare</a> (<a href="matlab: opentoline('/usr/lib/dynare/matlab/dynare.m',301,0)">line 301</a>)] 
+
+MODEL SUMMARY
+
+  Number of variables:         12
+  Number of stochastic shocks: 8
+  Number of state variables:   7
+  Number of jumpers:           1
+  Number of static variables:  5
+
+
+MATRIX OF COVARIANCE OF EXOGENOUS SHOCKS
+Variables     eps_YBar      eps_G      eps_y    eps_ppi    eps_tcr      eps_u   eps_UBar  eps_gUBar
+eps_YBar      1.000000   0.000000   0.000000   0.000000   0.000000   0.000000   0.000000   0.000000
+eps_G         0.000000   1.000000   0.000000   0.000000   0.000000   0.000000   0.000000   0.000000
+eps_y         0.000000   0.000000   1.000000   0.000000   0.000000   0.000000   0.000000   0.000000
+eps_ppi       0.000000   0.000000   0.000000   1.000000   0.000000   0.000000   0.000000   0.000000
+eps_tcr       0.000000   0.000000   0.000000   0.000000   1.000000   0.000000   0.000000   0.000000
+eps_u         0.000000   0.000000   0.000000   0.000000   0.000000   1.000000   0.000000   0.000000
+eps_UBar      0.000000   0.000000   0.000000   0.000000   0.000000   0.000000   1.000000   0.000000
+eps_gUBar     0.000000   0.000000   0.000000   0.000000   0.000000   0.000000   0.000000   1.000000
+
+POLICY AND TRANSITION FUNCTIONS
+                              gY_obs           gYBar               G               y             ppi         ppi_obs             tcr         tcr_obs           U_obs               u            UBar           gUBar
+Constant                    1.010117        1.010117        1.010117               0               0        0.750000               0               0        7.942669               0        7.942669               0
+G(-1)                       0.822364        0.822364        0.822364               0               0               0               0               0               0               0               0               0
+y(-1)                      -0.315005               0               0        0.684995        0.357875        0.357875               0               0       -0.264219       -0.264219               0               0
+tcr(-1)                            0               0               0               0        0.019791        0.019791        0.738222        0.738222               0               0               0               0
+u(-1)                              0               0               0               0               0               0               0               0        0.554874        0.554874               0               0
+UBar(-1)                           0               0               0               0               0               0               0               0        0.530334               0        0.530334               0
+gUBar(-1)                          0               0               0               0               0               0               0               0        0.906892               0        0.906892        0.906892
+ppi(-1)                            0               0               0               0        0.236789        0.236789               0               0               0               0               0               0
+eps_YBar                    0.473038        0.473038               0               0               0               0               0               0               0               0               0               0
+eps_G                       0.353960        0.353960        0.353960               0               0               0               0               0               0               0               0               0
+eps_y                       0.391250               0               0        0.391250        0.204409        0.204409               0               0       -0.150915       -0.150915               0               0
+eps_ppi                            0               0               0               0        0.287518        0.287518               0               0               0               0               0               0
+eps_tcr                            0               0               0               0        0.086490        0.086490        3.226061        3.226061               0               0               0               0
+eps_u                              0               0               0               0               0               0               0               0        0.078812        0.078812               0               0
+eps_UBar                           0               0               0               0               0               0               0               0        0.076572               0        0.076572               0
+eps_gUBar                          0               0               0               0               0               0               0               0        0.255919               0        0.255919        0.255919
+
+
+THEORETICAL MOMENTS
+VARIABLE         MEAN  STD. DEV.   VARIANCE
+gY_obs         1.0101     0.8902     0.7925
+gYBar          1.0101     0.7815     0.6108
+G              1.0101     0.6221     0.3870
+y              0.0000     0.5370     0.2884
+ppi            0.0000     0.4776     0.2281
+ppi_obs        0.7500     0.4776     0.2281
+tcr            0.0000     4.7825    22.8721
+tcr_obs        0.0000     4.7825    22.8721
+U_obs          7.9427     1.2726     1.6195
+u              0.0000     0.3834     0.1470
+UBar           7.9427     1.2135     1.4725
+gUBar          0.0000     0.6074     0.3689
+
+
+
+VARIANCE DECOMPOSITION (in percent)
+            eps_YBar      eps_G      eps_y    eps_ppi    eps_tcr      eps_u   eps_UBar  eps_gUBar
+gY_obs         28.24      48.84      22.93       0.00       0.00       0.00       0.00       0.00
+gYBar          36.64      63.36       0.00       0.00       0.00       0.00       0.00       0.00
+G               0.00     100.00       0.00       0.00       0.00       0.00       0.00       0.00
+y               0.00       0.00     100.00       0.00       0.00       0.00       0.00       0.00
+ppi             0.00       0.00      50.73      38.40      10.87       0.00       0.00       0.00
+ppi_obs         0.00       0.00      50.73      38.40      10.87       0.00       0.00       0.00
+tcr             0.00       0.00       0.00       0.00     100.00       0.00       0.00       0.00
+tcr_obs         0.00       0.00       0.00       0.00     100.00       0.00       0.00       0.00
+U_obs           0.00       0.00       8.52       0.00       0.00       0.55       0.50      90.42
+u               0.00       0.00      93.89       0.00       0.00       6.11       0.00       0.00
+UBar            0.00       0.00       0.00       0.00       0.00       0.00       0.55      99.45
+gUBar           0.00       0.00       0.00       0.00       0.00       0.00       0.00     100.00
+
+
+
+MATRIX OF CORRELATIONS
+Variables     gY_obs    gYBar        G        y      ppi  ppi_obs      tcr  tcr_obs    U_obs        u     UBar    gUBar
+gY_obs        1.0000   0.8779   0.6988   0.1900   0.0801   0.0801   0.0000   0.0000  -0.0032  -0.0108   0.0000   0.0000
+gYBar         0.8779   1.0000   0.7960   0.0000   0.0000   0.0000   0.0000   0.0000   0.0000   0.0000   0.0000   0.0000
+G             0.6988   0.7960   1.0000   0.0000   0.0000   0.0000   0.0000   0.0000   0.0000   0.0000   0.0000   0.0000
+y             0.1900   0.0000   0.0000   1.0000   0.7013   0.7013   0.0000   0.0000  -0.2626  -0.8715   0.0000   0.0000
+ppi           0.0801   0.0000   0.0000   0.7013   1.0000   1.0000   0.3254   0.3254  -0.1989  -0.6602   0.0000   0.0000
+ppi_obs       0.0801   0.0000   0.0000   0.7013   1.0000   1.0000   0.3254   0.3254  -0.1989  -0.6602   0.0000   0.0000
+tcr           0.0000   0.0000   0.0000   0.0000   0.3254   0.3254   1.0000   1.0000   0.0000   0.0000   0.0000   0.0000
+tcr_obs       0.0000   0.0000   0.0000   0.0000   0.3254   0.3254   1.0000   1.0000   0.0000   0.0000   0.0000   0.0000
+U_obs        -0.0032   0.0000   0.0000  -0.2626  -0.1989  -0.1989   0.0000   0.0000   1.0000   0.3013   0.9535   0.9195
+u            -0.0108   0.0000   0.0000  -0.8715  -0.6602  -0.6602   0.0000   0.0000   0.3013   1.0000   0.0000   0.0000
+UBar          0.0000   0.0000   0.0000   0.0000   0.0000   0.0000   0.0000   0.0000   0.9535   0.0000   1.0000   0.9643
+gUBar         0.0000   0.0000   0.0000   0.0000   0.0000   0.0000   0.0000   0.0000   0.9195   0.0000   0.9643   1.0000
+
+
+
+COEFFICIENTS OF AUTOCORRELATION
+Order           1       2       3       4       5
+gY_obs     0.3655  0.3055  0.2547  0.2118  0.1757
+gYBar      0.5211  0.4285  0.3524  0.2898  0.2383
+G          0.8224  0.6763  0.5562  0.4574  0.3761
+y          0.6850  0.4692  0.3214  0.2202  0.1508
+ppi        0.5835  0.3791  0.2573  0.1776  0.1233
+ppi_obs    0.5835  0.3791  0.2573  0.1776  0.1233
+tcr        0.7382  0.5450  0.4023  0.2970  0.2192
+tcr_obs    0.7382  0.5450  0.4023  0.2970  0.2192
+U_obs      0.9598  0.8919  0.8157  0.7400  0.6690
+u          0.8774  0.7078  0.5441  0.4056  0.2961
+UBar       0.9680  0.9103  0.8428  0.7734  0.7062
+gUBar      0.9069  0.8225  0.7459  0.6764  0.6134
+Total computing time : 0h00m11s
+Note: warning(s) encountered in MATLAB/Octave code
